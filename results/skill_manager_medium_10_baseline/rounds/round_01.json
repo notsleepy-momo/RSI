@@ -1,0 +1,60 @@
+{
+  "round": 1,
+  "train_indices": [
+    0,
+    2,
+    4,
+    6,
+    8
+  ],
+  "incumbent_version": 0,
+  "incumbent_skill_sha": "cc777412b2f4",
+  "candidate_skill_sha": "e91db211f0aa",
+  "incumbent": {
+    "success_rate": 0.3,
+    "mean_score": 0.3,
+    "invalid_actions": 0.0,
+    "mean_steps": 14.9,
+    "model_calls": 149.0,
+    "latency_seconds": 110.093
+  },
+  "candidate": {
+    "success_rate": 0.3,
+    "mean_score": 0.3,
+    "invalid_actions": 0.0,
+    "mean_steps": 15.0,
+    "model_calls": 150.0,
+    "latency_seconds": 102.327
+  },
+  "gate": {
+    "accepted": false,
+    "reason": "rejected: no material reward or policy-efficiency improvement",
+    "criterion": {
+      "reward_guard": "success_rate and mean_score must not regress",
+      "invalid_action_guard": "total invalid actions must not increase",
+      "secondary_metrics": [
+        "mean_steps",
+        "model_calls",
+        "invalid_actions"
+      ],
+      "minimum_relative_efficiency_gain": 0.1,
+      "latency": "diagnostic only; excluded from acceptance"
+    },
+    "deltas": {
+      "success_rate": 0.0,
+      "mean_score": 0.0,
+      "invalid_actions": 0.0
+    },
+    "relative_efficiency_gains": {
+      "mean_steps": -0.006711,
+      "model_calls": -0.006711,
+      "invalid_actions": 0.0,
+      "latency_seconds_diagnostic": 0.07054
+    }
+  },
+  "edit": {
+    "diagnosis": "Trajectories show severe repetition of 'take', 'examine', and 'move' cycles without inspecting the environment first. Rule 2 ('go to' before taking) is insufficient for complex scenes. Rule 3 is too specific to 'look-under-light' and fails for general illumination tasks. Rule 4 is generic and doesn't prevent the 'take-examine-move' loop. The model fails to distinguish between 'examine object' and 'examine object with light', leading to redundant actions when the lamp is already on or not needed.",
+    "candidate_skill": "# ALFWorld operating skill\n1. Preserve the task goal throughout the episode.\n2. Before interacting with an object, inspect the immediate area to confirm its location and state.\n3. To examine an object: go to the object, take it, then examine it. If the goal requires lighting, use the lamp before or while examining.\n4. To use an appliance: go to the appliance, use it, then return the object to its original location or the requested destination.\n5. If an action (take, examine, move) does not change the observation or progress the goal, stop repeating it immediately.\n6. Select the numeric ID of one action from the numbered admissible-action list.",
+    "edit_summary": "Replaced vague 'likely receptacles' with 'immediate area' to force inspection. Generalized Rule 3 to cover both 'look-under-light' and general illumination by explicitly sequencing 'use lamp' before/with 'examine'. Consolidated Rule 4 to handle appliance usage more cleanly. Added explicit stopping condition in Rule 5 to break the 'take-examine-move' loop observed in failed trajectories."
+  }
+}

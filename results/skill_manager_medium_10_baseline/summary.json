@@ -1,0 +1,196 @@
+{
+  "model": "/root/autodl-tmp/models/Qwen3.5-4B",
+  "seed": 0,
+  "manifest": {
+    "name": "alfworld_medium_10_seed0",
+    "seed": 0,
+    "train": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "validation": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "test": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "notes": "Fixed 10/10/10 split. Train, valid_seen and valid_unseen are separate ALFWorld partitions."
+  },
+  "rounds_requested": 2,
+  "rounds_completed": 2,
+  "accepted_updates": 0,
+  "final_skill_version": 0,
+  "final_skill_sha": "cc777412b2f4",
+  "test_no_skill": {
+    "success_rate": 0.3,
+    "mean_score": 0.3,
+    "invalid_actions": 0.0,
+    "mean_steps": 17.7,
+    "model_calls": 177.0,
+    "latency_seconds": 114.709
+  },
+  "test_static": {
+    "success_rate": 0.5,
+    "mean_score": 0.5,
+    "invalid_actions": 0.0,
+    "mean_steps": 15.4,
+    "model_calls": 154.0,
+    "latency_seconds": 96.617
+  },
+  "test_managed": {
+    "success_rate": 0.5,
+    "mean_score": 0.5,
+    "invalid_actions": 0.0,
+    "mean_steps": 15.4,
+    "model_calls": 154.0,
+    "latency_seconds": 94.224
+  },
+  "update_history": [
+    {
+      "round": 1,
+      "train_indices": [
+        0,
+        2,
+        4,
+        6,
+        8
+      ],
+      "incumbent_version": 0,
+      "incumbent_skill_sha": "cc777412b2f4",
+      "candidate_skill_sha": "e91db211f0aa",
+      "incumbent": {
+        "success_rate": 0.3,
+        "mean_score": 0.3,
+        "invalid_actions": 0.0,
+        "mean_steps": 14.9,
+        "model_calls": 149.0,
+        "latency_seconds": 110.093
+      },
+      "candidate": {
+        "success_rate": 0.3,
+        "mean_score": 0.3,
+        "invalid_actions": 0.0,
+        "mean_steps": 15.0,
+        "model_calls": 150.0,
+        "latency_seconds": 102.327
+      },
+      "gate": {
+        "accepted": false,
+        "reason": "rejected: no material reward or policy-efficiency improvement",
+        "criterion": {
+          "reward_guard": "success_rate and mean_score must not regress",
+          "invalid_action_guard": "total invalid actions must not increase",
+          "secondary_metrics": [
+            "mean_steps",
+            "model_calls",
+            "invalid_actions"
+          ],
+          "minimum_relative_efficiency_gain": 0.1,
+          "latency": "diagnostic only; excluded from acceptance"
+        },
+        "deltas": {
+          "success_rate": 0.0,
+          "mean_score": 0.0,
+          "invalid_actions": 0.0
+        },
+        "relative_efficiency_gains": {
+          "mean_steps": -0.006711,
+          "model_calls": -0.006711,
+          "invalid_actions": 0.0,
+          "latency_seconds_diagnostic": 0.07054
+        }
+      },
+      "edit": {
+        "diagnosis": "Trajectories show severe repetition of 'take', 'examine', and 'move' cycles without inspecting the environment first. Rule 2 ('go to' before taking) is insufficient for complex scenes. Rule 3 is too specific to 'look-under-light' and fails for general illumination tasks. Rule 4 is generic and doesn't prevent the 'take-examine-move' loop. The model fails to distinguish between 'examine object' and 'examine object with light', leading to redundant actions when the lamp is already on or not needed.",
+        "candidate_skill": "# ALFWorld operating skill\n1. Preserve the task goal throughout the episode.\n2. Before interacting with an object, inspect the immediate area to confirm its location and state.\n3. To examine an object: go to the object, take it, then examine it. If the goal requires lighting, use the lamp before or while examining.\n4. To use an appliance: go to the appliance, use it, then return the object to its original location or the requested destination.\n5. If an action (take, examine, move) does not change the observation or progress the goal, stop repeating it immediately.\n6. Select the numeric ID of one action from the numbered admissible-action list.",
+        "edit_summary": "Replaced vague 'likely receptacles' with 'immediate area' to force inspection. Generalized Rule 3 to cover both 'look-under-light' and general illumination by explicitly sequencing 'use lamp' before/with 'examine'. Consolidated Rule 4 to handle appliance usage more cleanly. Added explicit stopping condition in Rule 5 to break the 'take-examine-move' loop observed in failed trajectories."
+      }
+    },
+    {
+      "round": 2,
+      "train_indices": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "incumbent_version": 0,
+      "incumbent_skill_sha": "cc777412b2f4",
+      "candidate_skill_sha": "eb7baaa913df",
+      "incumbent": {
+        "success_rate": 0.3,
+        "mean_score": 0.3,
+        "invalid_actions": 0.0,
+        "mean_steps": 14.9,
+        "model_calls": 149.0,
+        "latency_seconds": 89.913
+      },
+      "candidate": {
+        "success_rate": 0.3,
+        "mean_score": 0.3,
+        "invalid_actions": 0.0,
+        "mean_steps": 15.0,
+        "model_calls": 150.0,
+        "latency_seconds": 99.292
+      },
+      "gate": {
+        "accepted": false,
+        "reason": "rejected: no material reward or policy-efficiency improvement",
+        "criterion": {
+          "reward_guard": "success_rate and mean_score must not regress",
+          "invalid_action_guard": "total invalid actions must not increase",
+          "secondary_metrics": [
+            "mean_steps",
+            "model_calls",
+            "invalid_actions"
+          ],
+          "minimum_relative_efficiency_gain": 0.1,
+          "latency": "diagnostic only; excluded from acceptance"
+        },
+        "deltas": {
+          "success_rate": 0.0,
+          "mean_score": 0.0,
+          "invalid_actions": 0.0
+        },
+        "relative_efficiency_gains": {
+          "mean_steps": -0.006711,
+          "model_calls": -0.006711,
+          "invalid_actions": 0.0,
+          "latency_seconds_diagnostic": -0.104312
+        }
+      },
+      "edit": {
+        "diagnosis": "Trajectories show a primary failure mode: the agent repeatedly executes 'take' followed immediately by 'move' the same object to the same location (e.g., 'take alarmclock 1 from desk 1' then 'move alarmclock 1 to desk 1'). This creates an infinite loop where the agent believes it has failed to inspect the object under the lamp, so it re-fetches and re-places it. The root cause is a missing rule that explicitly forbids moving an object to its current location after taking it, and a lack of instruction to verify the object's position relative to the lamp before attempting to move it. Rule 3 is too specific to 'look-under-light' tasks and doesn't prevent the general 'take-then-move' loop in other contexts.",
+        "candidate_skill": "# ALFWorld operating skill\n\n1. Preserve the task goal throughout the episode.\n2. Use `go to` to inspect likely receptacles before trying to take an object.\n3. If you take an object and immediately move it to the same location where you found it, abort the move action. This prevents infinite loops where the agent re-fetches and re-places the same item.\n4. For look-under-light tasks: find and take the target, go to the named lamp, switch the lamp on if necessary, then examine the target while holding it.\n5. For clean/heat/cool tasks: acquire the object, use the required appliance, then place it in the requested destination.\n6. Avoid repeating an action when the observation did not improve.\n7. Select the numeric ID of one action from the numbered admissible-action list.",
+        "edit_summary": "Added Rule 3 to explicitly forbid moving an object to its current location immediately after taking it, which directly addresses the recurring 'take-then-move-to-same-place' loop observed in failed trajectories. Removed the specific 'look-under-light' constraint from Rule 3 to generalize the prevention of redundant actions, while keeping the specific lamp logic in a dedicated Rule 4."
+      }
+    }
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "split": "train",
+  "task_index": 5,
+  "task_file": "/root/autodl-tmp/RSI/data/json_2.1.1/train/look_at_obj_in_light-AlarmClock-None-DeskLamp-302/trial_T20190908_192820_480968/game.tw-pddl",
+  "goal": "examine the alarmclock with the desklamp.",
+  "skill_sha": "cc777412b2f4",
+  "won": true,
+  "final_score": 1.0,
+  "steps": [
+    {
+      "step": 0,
+      "observation": "-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 1, a drawer 3, a drawer 2, a drawer 1, a garbagecan 1, a safe 1, a shelf 5, a shelf 4, a shelf 3, a shelf 2, a shelf 1, a sidetable 2, and a sidetable 1.\n\nYour task is to: examine the alarmclock with the desklamp.",
+      "admissible_actions": [
+        "go to bed 1",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 1",
+        "go to sidetable 2",
+        "help",
+        "inventory",
+        "look"
+      ],
+      "model_output": {
+        "action_id": 1
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 1,
+          "resolved_action_id": 1,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at desk 1. On the desk 1, you see a laptop 2, and a pen 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.574
+    },
+    {
+      "step": 1,
+      "observation": "You arrive at desk 1. On the desk 1, you see a laptop 2, and a pen 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "go to bed 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 1",
+        "go to sidetable 2",
+        "help",
+        "inventory",
+        "look",
+        "take laptop 2 from desk 1",
+        "take pen 1 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 12
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 12,
+          "resolved_action_id": 12,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to sidetable 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at sidetable 1. On the sidetable 1, you see a keychain 1, and a pencil 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.796
+    },
+    {
+      "step": 2,
+      "observation": "You arrive at sidetable 1. On the sidetable 1, you see a keychain 1, and a pencil 1.",
+      "admissible_actions": [
+        "examine sidetable 1",
+        "go to bed 1",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 2",
+        "help",
+        "inventory",
+        "look",
+        "take keychain 1 from sidetable 1",
+        "take pencil 1 from sidetable 1"
+      ],
+      "model_output": {
+        "action_id": 13
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 13,
+          "resolved_action_id": 13,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to sidetable 2",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at sidetable 2. On the sidetable 2, you see a alarmclock 1, a cd 2, and a desklamp 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.61
+    },
+    {
+      "step": 3,
+      "observation": "You arrive at sidetable 2. On the sidetable 2, you see a alarmclock 1, a cd 2, and a desklamp 1.",
+      "admissible_actions": [
+        "examine sidetable 2",
+        "go to bed 1",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from sidetable 2",
+        "take cd 2 from sidetable 2",
+        "use desklamp 1"
+      ],
+      "model_output": {
+        "action_id": 17
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 17,
+          "resolved_action_id": 17,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "take alarmclock 1 from sidetable 2",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You pick up the alarmclock 1 from the sidetable 2.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.629
+    },
+    {
+      "step": 4,
+      "observation": "You pick up the alarmclock 1 from the sidetable 2.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine sidetable 2",
+        "go to bed 1",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to sidetable 2",
+        "use desklamp 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine alarmclock 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "There's nothing special about alarmclock 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.617
+    },
+    {
+      "step": 5,
+      "observation": "There's nothing special about alarmclock 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine sidetable 2",
+        "go to bed 1",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to safe 1",
+        "go to shelf 1",
+        "go to shelf 2",
+        "go to shelf 3",
+        "go to shelf 4",
+        "go to shelf 5",
+        "go to sidetable 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to sidetable 2",
+        "use desklamp 1"
+      ],
+      "model_output": {
+        "action_id": 19
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 19,
+          "resolved_action_id": 19,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "use desklamp 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You turn on the desklamp 1.",
+      "score": 1.0,
+      "done": true,
+      "latency_seconds": 0.625
+    }
+  ],
+  "invalid_action_count": 0,
+  "model_call_count": 6,
+  "latency_seconds": 3.851,
+  "done_reason": "environment_done"
+}
