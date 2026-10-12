@@ -1,0 +1,57 @@
+{
+  "round": 2,
+  "train_indices": [
+    1,
+    4
+  ],
+  "incumbent_version": 0,
+  "incumbent_skill_sha": "cc777412b2f4",
+  "candidate_skill_sha": "b846d666eaca",
+  "incumbent": {
+    "success_rate": 0.4,
+    "mean_score": 0.4,
+    "invalid_actions": 0.0,
+    "mean_steps": 13.2,
+    "model_calls": 66.0,
+    "latency_seconds": 39.885
+  },
+  "candidate": {
+    "success_rate": 0.4,
+    "mean_score": 0.4,
+    "invalid_actions": 0.0,
+    "mean_steps": 13.6,
+    "model_calls": 68.0,
+    "latency_seconds": 47.576
+  },
+  "gate": {
+    "accepted": false,
+    "reason": "rejected: no material reward or policy-efficiency improvement",
+    "criterion": {
+      "reward_guard": "success_rate and mean_score must not regress",
+      "invalid_action_guard": "total invalid actions must not increase",
+      "secondary_metrics": [
+        "mean_steps",
+        "model_calls",
+        "invalid_actions"
+      ],
+      "minimum_relative_efficiency_gain": 0.1,
+      "latency": "diagnostic only; excluded from acceptance"
+    },
+    "deltas": {
+      "success_rate": 0.0,
+      "mean_score": 0.0,
+      "invalid_actions": 0.0
+    },
+    "relative_efficiency_gains": {
+      "mean_steps": -0.030303,
+      "model_calls": -0.030303,
+      "invalid_actions": 0.0,
+      "latency_seconds_diagnostic": -0.192829
+    }
+  },
+  "edit": {
+    "diagnosis": "Trajectories show severe repetition cycles (take-examine-move) and incorrect object placement (moving items to wrong surfaces like sidetable instead of desk). The model fails to distinguish between 'inspecting a location' and 'placing an object', often looping between 'go to' and 'take' without verifying the target's current state or the destination's validity. Rule 3 is too specific and conflicts with general placement logic in failed trajectories.",
+    "candidate_skill": "# ALFWorld operating skill\n1. Preserve the task goal throughout the episode.\n2. Before interacting with an object, use `go to` to navigate to its likely location and inspect the scene to confirm its position and state.\n3. To examine an object: navigate to it, take it, then use `examine` while holding it. Do not move the object unless the goal explicitly requires relocation.\n4. To relocate an object: take the object from its current location, navigate to the requested destination, and place it there using `move`. Ensure the destination is the correct surface for the task.\n5. If an action (take, examine, move) does not change the observation state, stop repeating that action and re-evaluate the scene.\n6. Select the numeric ID of one action from the numbered admissible-action list.",
+    "edit_summary": "Replaced specific lamp logic with general examination/relocation rules. Added explicit constraint to stop repeating ineffective actions. Clarified the distinction between inspecting a location and placing an object to prevent the observed 'take-examine-move' loops and wrong placement errors."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "ok": true,
+  "manifest": {
+    "name": "alfworld_small_5_seed0",
+    "seed": 0,
+    "train": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "validation": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "test": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "notes": "Fixed first-stage 5/5/5 split. Test indices are evaluated only after all Skill Manager updates."
+  },
+  "round_batches": [
+    [
+      0,
+      3
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2
+    ]
+  ],
+  "planned_comparisons": [
+    "test_no_skill",
+    "test_static",
+    "test_managed"
+  ],
+  "gate_examples": {
+    "tied_but_faster": {
+      "accepted": true,
+      "reason": "accepted: reward tied and policy efficiency improved materially",
+      "criterion": {
+        "reward_guard": "success_rate and mean_score must not regress",
+        "invalid_action_guard": "total invalid actions must not increase",
+        "secondary_metrics": [
+          "mean_steps",
+          "model_calls",
+          "invalid_actions"
+        ],
+        "minimum_relative_efficiency_gain": 0.1,
+        "latency": "diagnostic only; excluded from acceptance"
+      },
+      "deltas": {
+        "success_rate": 0.0,
+        "mean_score": 0.0,
+        "invalid_actions": 0.0
+      },
+      "relative_efficiency_gains": {
+        "mean_steps": 0.571429,
+        "model_calls": 0.571429,
+        "invalid_actions": 0.0,
+        "latency_seconds_diagnostic": 0.571429
+      }
+    },
+    "reward_regression": {
+      "accepted": false,
+      "reason": "rejected: validation reward regressed",
+      "criterion": {
+        "reward_guard": "success_rate and mean_score must not regress",
+        "invalid_action_guard": "total invalid actions must not increase",
+        "secondary_metrics": [
+          "mean_steps",
+          "model_calls",
+          "invalid_actions"
+        ],
+        "minimum_relative_efficiency_gain": 0.1,
+        "latency": "diagnostic only; excluded from acceptance"
+      },
+      "deltas": {
+        "success_rate": -0.2,
+        "mean_score": -0.2,
+        "invalid_actions": 0.0
+      },
+      "relative_efficiency_gains": {
+        "mean_steps": 0.714286,
+        "model_calls": 0.714286,
+        "invalid_actions": 0.0,
+        "latency_seconds_diagnostic": 0.714286
+      }
+    }
+  }
+}
