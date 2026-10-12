@@ -3,7 +3,8 @@
 This experiment extends the week-1 single-update reproduction without
 changing that baseline. It evaluates a two-level design:
 
-- **Actor (inner loop):** frozen `qwen3.5:4b` policy selecting an admissible
+- **Actor (inner loop):** frozen `Qwen/Qwen3.5-4B` policy loaded directly with
+  Hugging Face Transformers and selecting an admissible
   ALFWorld action.
 - **Skill Manager (outer loop):** collects training trajectories, proposes a
   bounded skill edit, validates it against the incumbent, and versions only
@@ -42,30 +43,40 @@ After all updates, the untouched test set is evaluated with:
 The output directory contains `summary.json`, `update_history.json`, per-round
 gate records, per-episode trajectories, and a versioned `skills/` directory.
 
-## Commands
+## Native Linux (without Docker or Ollama)
 
-Validate bookkeeping and container packaging without model calls:
+The recommended cloud environment is Ubuntu 22.04, Python 3.12, PyTorch 2.8,
+and CUDA 12.8. Install the native ALFWorld build dependencies and the direct
+Transformers backend from the project root:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass `
-  -File .\run_skill_manager_small.ps1 `
-  -DryRun
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake git unzip
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.qwen35.txt
 ```
 
-Run the complete fixed 5/5/5 experiment:
+Validate bookkeeping without loading model weights:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass `
-  -File .\run_skill_manager_small.ps1 `
-  -Model qwen3.5:4b `
-  -Rounds 3 `
-  -Patience 2 `
-  -MaxSteps 20 `
-  -ActionRetries 2 `
-  -StagnationWindow 8 `
-  -MinEfficiencyGain 0.10
+```bash
+python ollama_adapter/skill_manager_experiment.py --dry-run
 ```
 
-The full run is intentionally not part of the dry-run verification. On the
-current machine, one 20-step episode can take roughly 25 minutes, so reserve a
-multi-hour uninterrupted window for the complete experiment.
+Run the complete fixed 5/5/5 experiment. The first run downloads the model and
+the official ALFWorld text data:
+
+```bash
+chmod +x run_skill_manager_small.sh
+./run_skill_manager_small.sh \
+  --rounds 3 \
+  --patience 2 \
+  --max-steps 20 \
+  --action-retries 2 \
+  --stagnation-window 8 \
+  --min-efficiency-gain 0.10
+```
+
+The launcher uses `python`, local data under `./data`, local results under
+`./results`, and FP16 inference. Override these with the `PYTHON_BIN`,
+`ALFWORLD_DATA`, `MODEL`, `DEVICE_MAP`, and `MODEL_DTYPE` environment variables.
+For a previously downloaded model, set `MODEL` to its local directory.

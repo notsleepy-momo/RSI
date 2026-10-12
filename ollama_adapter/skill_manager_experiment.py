@@ -26,11 +26,13 @@ from skillopt_minimal import (
 
 
 def parse_args() -> argparse.Namespace:
+    project = Path(__file__).resolve().parents[1]
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model", default="qwen3.5:4b")
-    p.add_argument("--ollama-url", default="http://host.docker.internal:11434")
-    p.add_argument("--output-dir", default="/results/skill_manager_small")
-    p.add_argument("--split-manifest", default="/opt/alfworld_project/configs/splits_small_5.json")
+    p.add_argument("--model", default="Qwen/Qwen3.5-4B", help="Hugging Face model ID or local directory")
+    p.add_argument("--device-map", default="auto")
+    p.add_argument("--dtype", choices=("auto", "float16", "bfloat16", "float32"), default="auto")
+    p.add_argument("--output-dir", default=str(project / "results" / "skill_manager_small"))
+    p.add_argument("--split-manifest", default=str(project / "configs" / "splits_small_5.json"))
     p.add_argument("--rounds", type=int, default=3)
     p.add_argument("--patience", type=int, default=2, help="stop after this many consecutive rejected rounds; 0 disables")
     p.add_argument("--max-steps", type=int, default=20)
@@ -182,7 +184,7 @@ def main() -> int:
         return dry_run(out, manifest, args, static_skill)
 
     runner = AlfWorldRunner(
-        args.model, args.ollama_url, args.timeout, args.seed, args.action_retries, args.stagnation_window
+        args.model, args.device_map, args.dtype, args.timeout, args.seed, args.action_retries, args.stagnation_window
     )
     skill = static_skill
     version = 0
@@ -193,7 +195,7 @@ def main() -> int:
     for round_number, train_batch in enumerate(round_batches(manifest["train"], args.rounds), start=1):
         prefix = f"round_{round_number:02d}"
         train_eps = run_set(runner, "train", train_batch, skill, args.max_steps, out, f"{prefix}_train")
-        edit = propose_skill_edit(args.model, args.ollama_url, args.timeout, args.seed + round_number, skill, train_eps)
+        edit = propose_skill_edit(runner.backend, args.model, args.seed + round_number, skill, train_eps)
         candidate = edit["candidate_skill"]
         incumbent_eps = run_set(
             runner, "valid_seen", manifest["validation"], skill, args.max_steps, out, f"{prefix}_validation_incumbent"

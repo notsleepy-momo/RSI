@@ -1,0 +1,7 @@
+numpy<2
+alfworld==0.4.2
+pyyaml
+requests
+accelerate
+transformers>=5.2.0,<6
+safetensors

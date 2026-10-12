@@ -12,14 +12,14 @@ import json
 import os
 import random
 import re
-import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
 import numpy as np
-import requests
 import yaml
+
+from local_qwen import LocalQwen
 
 
 DEFAULT_SKILL = """# ALFWorld operating skill
@@ -37,16 +37,17 @@ DEFAULT_SKILL = """# ALFWorld operating skill
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model", default="qwen3.5:4b")
-    p.add_argument("--ollama-url", default=os.environ.get("OLLAMA_URL", "http://host.docker.internal:11434"))
-    p.add_argument("--output-dir", default="/results/skillopt_minimal")
+    p.add_argument("--model", default="Qwen/Qwen3.5-4B", help="Hugging Face model ID or local directory")
+    p.add_argument("--device-map", default="auto")
+    p.add_argument("--dtype", choices=("auto", "float16", "bfloat16", "float32"), default="auto")
+    p.add_argument("--output-dir", default="results/skillopt_minimal")
     p.add_argument("--train-indices", default="0", help="comma-separated ALFWorld train indices")
     p.add_argument("--validation-indices", default="0", help="comma-separated valid_seen indices")
     p.add_argument("--test-indices", default="0", help="comma-separated valid_unseen indices")
     p.add_argument("--max-steps", type=int, default=20)
     p.add_argument("--action-retries", type=int, default=2, help="retries after an invalid model action")
     p.add_argument("--stagnation-window", type=int, default=8, help="stop after this many cyclic no-progress steps; 0 disables")
-    p.add_argument("--timeout", type=float, default=240.0)
+    p.add_argument("--timeout", type=float, default=240.0, help="deprecated; kept for CLI compatibility")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--initial-skill", help="optional UTF-8 Markdown skill file")
     p.add_argument("--skip-optimization", action="store_true")
@@ -78,11 +79,13 @@ def load_config() -> dict[str, Any]:
     return config
 
 
-def ollama_chat(url: str, payload: dict[str, Any], timeout: float) -> tuple[dict[str, Any], float]:
-    started = time.time()
-    response = requests.post(url.rstrip("/") + "/api/chat", json=payload, timeout=timeout)
-    response.raise_for_status()
-    return response.json(), time.time() - started
+def local_chat(backend: LocalQwen, payload: dict[str, Any]) -> tuple[dict[str, Any], float]:
+    options = payload["options"]
+    content, latency = backend.chat(
+        payload["messages"][0]["content"], int(options["num_predict"]),
+        float(options["temperature"]), int(options["seed"]),
+    )
+    return {"message": {"content": content}}, latency
 
 
 def parse_json_content(body: dict[str, Any]) -> dict[str, Any]:
@@ -269,9 +272,9 @@ def stable_sha(text: str) -> str:
 
 
 class AlfWorldRunner:
-    def __init__(self, model: str, ollama_url: str, timeout: float, seed: int, action_retries: int = 2, stagnation_window: int = 8):
+    def __init__(self, model: str, device_map: str, dtype: str, timeout: float, seed: int, action_retries: int = 2, stagnation_window: int = 8):
         self.model = model
-        self.ollama_url = ollama_url
+        self.backend = LocalQwen(model, device_map, dtype)
         self.timeout = timeout
         self.seed = seed
         self.action_retries = action_retries
@@ -326,10 +329,8 @@ class AlfWorldRunner:
                         f"Invalid output: {json.dumps(attempts[-1]['raw_action_id'], ensure_ascii=False)}. "
                         f"Return one integer from 0 through {len(allowed) - 1}."
                     )
-                body, call_latency = ollama_chat(
-                    self.ollama_url,
-                    action_payload(self.model, base_prompt + retry_note, self.seed + attempt_index),
-                    self.timeout,
+                body, call_latency = local_chat(
+                    self.backend, action_payload(self.model, base_prompt + retry_note, self.seed + attempt_index)
                 )
                 latency += call_latency
                 parsed = parse_json_content(body)
@@ -394,7 +395,7 @@ def compact_trajectories(episodes: list[EpisodeResult]) -> str:
     return "\n\n".join(chunks)
 
 
-def propose_skill_edit(model: str, url: str, timeout: float, seed: int, skill: str, episodes: list[EpisodeResult]) -> dict[str, str]:
+def propose_skill_edit(backend: LocalQwen, model: str, seed: int, skill: str, episodes: list[EpisodeResult]) -> dict[str, str]:
     prompt = f"""You optimize a reusable ALFWorld skill document for a frozen small language model.
 Diagnose recurring trajectory failures and produce ONE bounded revision.
 
@@ -411,7 +412,7 @@ CURRENT SKILL:
 
 TRAINING TRAJECTORIES:
 {compact_trajectories(episodes)}"""
-    body, _ = ollama_chat(url, edit_payload(model, prompt, seed), timeout)
+    body, _ = local_chat(backend, edit_payload(model, prompt, seed))
     parsed = parse_json_content(body)
     candidate = str(parsed.get("candidate_skill", "")).strip()
     if not candidate or len(candidate) > 1800:
@@ -491,7 +492,7 @@ def main() -> int:
     if not data_dir.exists():
         raise SystemExit(f"ALFWORLD_DATA does not exist: {data_dir}")
     runner = AlfWorldRunner(
-        args.model, args.ollama_url, args.timeout, args.seed, args.action_retries, args.stagnation_window
+        args.model, args.device_map, args.dtype, args.timeout, args.seed, args.action_retries, args.stagnation_window
     )
     train_indices = comma_ints(args.train_indices)
     validation_indices = comma_ints(args.validation_indices)
@@ -501,7 +502,7 @@ def main() -> int:
     edit = {"diagnosis": "optimization skipped", "candidate_skill": skill, "edit_summary": "none"}
     gate: dict[str, Any] = {"accepted": False, "reason": "optimization skipped"}
     if not args.skip_optimization:
-        edit = propose_skill_edit(args.model, args.ollama_url, args.timeout, args.seed, skill, train_eps)
+        edit = propose_skill_edit(runner.backend, args.model, args.seed, skill, train_eps)
         candidate = edit["candidate_skill"]
         incumbent_eps = run_set(runner, "valid_seen", validation_indices, skill, args.max_steps, out, "validation_incumbent")
         candidate_eps = run_set(runner, "valid_seen", validation_indices, candidate, args.max_steps, out, "validation_candidate")
