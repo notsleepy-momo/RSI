@@ -21,6 +21,7 @@ WORKDIR /opt/alfworld_project
 COPY requirements.ollama.txt /opt/alfworld_project/requirements.ollama.txt
 COPY download_alfworld_data.py /opt/alfworld_project/download_alfworld_data.py
 COPY alfworld_config.yaml /opt/alfworld_project/alfworld_config.yaml
+COPY configs /opt/alfworld_project/configs
 COPY ollama_adapter /opt/alfworld_project/ollama_adapter
 
 # Data is deliberately kept outside the image.  It is downloaded once into a

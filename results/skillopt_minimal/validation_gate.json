@@ -1,18 +1,22 @@
 {
-  "accepted": true,
-  "incumbent_skill_sha": "ff629533b5d4",
-  "candidate_skill_sha": "d84c71d7c7fe",
+  "accepted": false,
+  "incumbent_skill_sha": "cc777412b2f4",
+  "candidate_skill_sha": "72ca5044f6f8",
   "incumbent": {
-    "success_rate": 0.0,
-    "mean_score": 0.0,
-    "invalid_actions": 1.0,
-    "mean_steps": 20.0
+    "success_rate": 1.0,
+    "mean_score": 1.0,
+    "invalid_actions": 0.0,
+    "mean_steps": 7.0,
+    "model_calls": 7.0,
+    "latency_seconds": 427.622
   },
   "candidate": {
     "success_rate": 1.0,
     "mean_score": 1.0,
-    "invalid_actions": 2.0,
-    "mean_steps": 3.0
+    "invalid_actions": 0.0,
+    "mean_steps": 3.0,
+    "model_calls": 3.0,
+    "latency_seconds": 185.861
   },
   "criterion": "strict lexicographic improvement in (success_rate, mean_score)"
 }

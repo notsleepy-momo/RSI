@@ -3,7 +3,7 @@
   "task_index": 0,
   "task_file": "/opt/alfworld_data/json_2.1.1/valid_seen/look_at_obj_in_light-AlarmClock-None-DeskLamp-323/trial_T20190909_044715_250790/game.tw-pddl",
   "goal": "look at alarmclock under the desklamp.",
-  "skill_sha": "d84c71d7c7fe",
+  "skill_sha": "72ca5044f6f8",
   "won": true,
   "final_score": 1.0,
   "steps": [
@@ -35,23 +35,24 @@
         "look"
       ],
       "model_output": {
-        "action": "go to desk 1"
+        "action_id": 2
       },
       "action_attempts": [
         {
           "attempt": 0,
-          "raw_action": "go to desk 1",
+          "raw_action_id": 2,
+          "resolved_action_id": 2,
           "valid": true,
-          "selection": "model_exact"
+          "selection": "model_action_id"
         }
       ],
       "selected_action": "go to desk 1",
-      "selection": "model_exact",
+      "selection": "model_action_id",
       "loop_guard_blocked": [],
       "next_observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 2, a book 1, a bowl 1, a cd 2, a desklamp 1, a mug 2, a mug 1, a pen 2, and a pen 1.",
       "score": 0.0,
       "done": false,
-      "latency_seconds": 57.668
+      "latency_seconds": 61.89
     },
     {
       "step": 1,
@@ -90,29 +91,24 @@
         "use desklamp 1"
       ],
       "model_output": {
-        "action": "use desklamp 1"
+        "action_id": 30
       },
       "action_attempts": [
         {
           "attempt": 0,
-          "raw_action": "examine alarmclock 2 on desk 1",
-          "valid": false,
-          "selection": "fallback_first_admissible"
-        },
-        {
-          "attempt": 1,
-          "raw_action": "use desklamp 1",
+          "raw_action_id": 30,
+          "resolved_action_id": 30,
           "valid": true,
-          "selection": "model_exact"
+          "selection": "model_action_id"
         }
       ],
       "selected_action": "use desklamp 1",
-      "selection": "model_exact",
+      "selection": "model_action_id",
       "loop_guard_blocked": [],
       "next_observation": "You turn on the desklamp 1.",
       "score": 0.0,
       "done": false,
-      "latency_seconds": 126.954
+      "latency_seconds": 62.192
     },
     {
       "step": 2,
@@ -151,31 +147,28 @@
         "use desklamp 1"
       ],
       "model_output": {
-        "action": "take alarmclock 2 from desk 1"
+        "action_id": 22
       },
       "action_attempts": [
         {
           "attempt": 0,
-          "raw_action": "examine alarmclock 2 under desklamp 1",
-          "valid": false,
-          "selection": "fallback_first_admissible"
-        },
-        {
-          "attempt": 1,
-          "raw_action": "take alarmclock 2 from desk 1",
+          "raw_action_id": 22,
+          "resolved_action_id": 22,
           "valid": true,
-          "selection": "model_exact"
+          "selection": "model_action_id"
         }
       ],
       "selected_action": "take alarmclock 2 from desk 1",
-      "selection": "model_exact",
+      "selection": "model_action_id",
       "loop_guard_blocked": [],
       "next_observation": "You pick up the alarmclock 2 from the desk 1.",
       "score": 1.0,
       "done": true,
-      "latency_seconds": 122.673
+      "latency_seconds": 61.779
     }
   ],
-  "invalid_action_count": 2,
+  "invalid_action_count": 0,
+  "model_call_count": 3,
+  "latency_seconds": 185.861,
   "done_reason": "environment_done"
 }

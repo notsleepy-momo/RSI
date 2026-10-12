@@ -1,0 +1,8 @@
+{
+  "name": "alfworld_small_5_seed0",
+  "seed": 0,
+  "train": [0, 1, 2, 3, 4],
+  "validation": [0, 1, 2, 3, 4],
+  "test": [0, 1, 2, 3, 4],
+  "notes": "Fixed first-stage 5/5/5 split. Test indices are evaluated only after all Skill Manager updates."
+}

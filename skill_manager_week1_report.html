@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Skill Manager 双层架构：第一周 ALFWorld 核心机制复现汇报" />
+  <title>Skill Manager · Week 01</title>
+  <style>
+    :root {
+      --ink:#15251f; --muted:#607068; --paper:#f7f3ea; --panel:#fffdf8;
+      --green:#176b52; --mint:#9ed7bd; --lime:#d5ee86; --orange:#f38b52;
+      --red:#d95d54; --line:#d9ddd3; --shadow:0 22px 60px rgba(35,55,46,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-snap-type:y mandatory;background:var(--paper)}
+    body{margin:0;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;overflow-x:hidden}
+    button{font:inherit}
+    .grain{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.35;background-image:radial-gradient(rgba(20,40,30,.08) .7px,transparent .7px);background-size:7px 7px;mix-blend-mode:multiply}
+    .rail{position:fixed;z-index:30;left:24px;top:50%;transform:translateY(-50%);display:grid;gap:10px}
+    .dot{width:10px;height:10px;padding:0;border:0;border-radius:50%;background:#b8c1b8;cursor:pointer;transition:.25s}
+    .dot.active{height:30px;border-radius:10px;background:var(--green)}
+    .page-no{position:fixed;z-index:30;right:28px;top:24px;font-size:12px;letter-spacing:.14em;color:var(--muted)}
+    section{min-height:100vh;scroll-snap-align:start;display:flex;align-items:center;padding:72px max(7vw,72px);position:relative;overflow:hidden}
+    section:nth-of-type(even){background:#eef3eb}
+    .wrap{width:min(1180px,100%);margin:auto;position:relative;z-index:2}
+    .eyebrow{display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.18em;font-size:12px;font-weight:800;color:var(--green);margin-bottom:20px}
+    .eyebrow:before{content:"";width:34px;height:3px;border-radius:3px;background:var(--orange)}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(52px,8vw,106px);line-height:.92;letter-spacing:-.07em;margin-bottom:28px;max-width:960px}
+    h2{font-size:clamp(38px,5.6vw,72px);line-height:1;letter-spacing:-.055em;margin-bottom:18px}
+    h3{font-size:21px;margin-bottom:8px}
+    .lead{font-size:clamp(18px,2vw,26px);line-height:1.55;color:var(--muted);max-width:720px}
+    .pill{display:inline-flex;gap:10px;align-items:center;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);font-size:13px;font-weight:700}
+    .hero-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+    .hero-orbit{position:absolute;right:-100px;bottom:-140px;width:520px;height:520px;border:1px solid #adc8b8;border-radius:50%}
+    .hero-orbit:before,.hero-orbit:after{content:"";position:absolute;border-radius:50%;border:1px solid #adc8b8}
+    .hero-orbit:before{inset:70px}.hero-orbit:after{inset:150px;background:var(--lime);border:0;box-shadow:var(--shadow)}
+    .hero-orbit i{position:absolute;width:54px;height:54px;border-radius:18px;background:var(--orange);left:48px;top:90px;box-shadow:var(--shadow);animation:float 3s ease-in-out infinite}
+    @keyframes float{50%{transform:translateY(-14px) rotate(6deg)}}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+    .architecture{background:var(--panel);border:1px solid var(--line);border-radius:32px;padding:28px;box-shadow:var(--shadow);min-height:510px;display:grid;gap:18px;position:relative}
+    .layer{border-radius:24px;padding:24px;position:relative;overflow:hidden}
+    .manager{background:var(--green);color:white}
+    .actor{background:#e3efd9;border:1px solid #c6d9c1}
+    .layer-label{font-size:12px;letter-spacing:.15em;text-transform:uppercase;opacity:.75;margin-bottom:9px}
+    .layer h3{font-size:30px;margin-bottom:12px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.15);font-size:12px;font-weight:700}
+    .actor .chip{background:white;color:var(--green)}
+    .connector{height:34px;display:grid;place-items:center;color:var(--orange);font-size:28px;font-weight:900}
+    .steps{display:grid;gap:14px;margin-top:28px}
+    .step{display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+    .step b{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--lime);font-size:15px}
+    .step p{margin:2px 0 0;color:var(--muted);font-size:14px}
+    .pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:42px;position:relative}
+    .pipeline:before{content:"";position:absolute;left:8%;right:8%;top:43px;height:3px;background:linear-gradient(90deg,var(--green),var(--orange));z-index:0}
+    .node{position:relative;z-index:1;text-align:center}
+    .node-icon{width:86px;height:86px;border-radius:27px;margin:0 auto 14px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);box-shadow:0 12px 28px rgba(35,55,46,.09);font-size:30px}
+    .node strong{display:block;font-size:15px}.node span{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+    .experiment-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+    .exp-card{border-radius:22px;padding:22px;background:rgba(255,255,255,.72);border:1px solid var(--line)}
+    .exp-card strong{display:block;font-size:34px;letter-spacing:-.04em;color:var(--green)}
+    .exp-card span{font-size:13px;color:var(--muted)}
+    .results{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;margin-top:34px}
+    .result-main,.result-side{background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:28px;box-shadow:var(--shadow)}
+    .bar-row{display:grid;grid-template-columns:130px 1fr 56px;gap:12px;align-items:center;margin:20px 0}
+    .bar-row label{font-size:13px;font-weight:800}.bar{height:18px;background:#e7e9e2;border-radius:10px;overflow:hidden}.fill{height:100%;border-radius:10px;background:var(--green);width:var(--w);animation:grow 1.2s ease both}.fill.fail{background:var(--red)}
+    @keyframes grow{from{width:0}}
+    .bar-row output{text-align:right;font-weight:900}
+    .big-number{font-size:88px;font-weight:900;letter-spacing:-.08em;line-height:1;color:var(--green)}
+    .big-number small{font-size:18px;letter-spacing:0;color:var(--muted)}
+    .compare{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-top:26px}
+    .compare-box{padding:18px;border-radius:18px;background:#edf2ea;text-align:center}.compare-box.accent{background:var(--lime)}
+    .compare-box strong{font-size:34px;display:block}.arrow{font-size:26px;color:var(--orange)}
+    .finding{margin-top:18px;padding:14px 16px;border-radius:15px;background:#fff3e9;color:#8b4726;font-size:13px;font-weight:700}
+    .problem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:38px}
+    .problem{min-height:250px;padding:24px;border-radius:24px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;transition:.25s}
+    .problem:hover{transform:translateY(-8px);box-shadow:var(--shadow)}
+    .problem i{font-style:normal;font-size:32px}.problem p{font-size:14px;line-height:1.6;color:var(--muted);margin:0}.tag{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--red)}
+    .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+    .phase{padding:26px;border-radius:26px;border:1px solid var(--line);background:var(--panel);position:relative;min-height:300px}
+    .phase.active{background:var(--green);color:white;transform:translateY(-12px);box-shadow:var(--shadow)}
+    .phase-no{font-size:12px;letter-spacing:.16em;opacity:.7}.phase h3{font-size:28px;margin:16px 0}.phase ul{padding:0;margin:0;list-style:none;display:grid;gap:12px}.phase li{font-size:14px;display:flex;gap:9px;align-items:flex-start}.phase li:before{content:"✓";font-weight:900;color:var(--orange)}
+    .phase.active li:before{color:var(--lime)}
+    .final{text-align:center}.final h2{max-width:900px;margin:0 auto 26px}.final .lead{margin:0 auto}.signal{width:170px;height:170px;margin:0 auto 38px;border-radius:52px;background:var(--lime);display:grid;place-items:center;font-size:72px;box-shadow:var(--shadow);transform:rotate(-5deg)}
+    .footer-note{margin-top:34px;font-size:12px;color:var(--muted)}
+    .hint{position:fixed;z-index:30;right:26px;bottom:22px;font-size:11px;color:var(--muted);padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.76);backdrop-filter:blur(10px)}
+    .note-toggle{position:fixed;z-index:31;right:26px;top:58px;border:1px solid var(--line);background:rgba(255,255,255,.88);color:var(--ink);padding:9px 13px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:800;box-shadow:0 8px 24px rgba(35,55,46,.08)}
+    .speaker-note{position:fixed;z-index:32;right:26px;top:104px;width:min(380px,calc(100vw - 52px));padding:20px;border-radius:20px;background:rgba(21,37,31,.94);color:white;box-shadow:var(--shadow);backdrop-filter:blur(14px);transform:translateX(calc(100% + 40px));opacity:0;transition:.3s}
+    .speaker-note.show{transform:none;opacity:1}.speaker-note small{display:block;color:var(--mint);font-weight:900;letter-spacing:.14em;margin-bottom:9px}.speaker-note p{font-size:14px;line-height:1.75;margin:0;color:#eef5f0}
+    .analogy{display:grid;grid-template-columns:1fr 80px 1fr;gap:22px;align-items:center;margin-top:36px}
+    .analogy-card{min-height:340px;border-radius:30px;background:var(--panel);border:1px solid var(--line);padding:28px;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between}
+    .analogy-card .scene{height:170px;border-radius:22px;background:#e3efd9;display:grid;place-items:center;font-size:72px;position:relative;overflow:hidden}.analogy-card .scene:after{content:"";position:absolute;width:120px;height:18px;border-radius:50%;background:rgba(23,107,82,.12);bottom:24px}
+    .analogy-mid{text-align:center;font-size:34px;color:var(--orange);font-weight:900}.plain{font-size:14px;line-height:1.65;color:var(--muted);margin:0}
+    .episode{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:38px}.moment{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;min-height:240px;position:relative}.moment:after{content:"→";position:absolute;right:-23px;top:46%;z-index:4;font-size:26px;color:var(--orange);font-weight:900}.moment:last-child:after{display:none}.moment-icon{font-size:40px}.moment strong{display:block;font-size:18px;margin:20px 0 8px}.moment p{font-size:13px;color:var(--muted);line-height:1.55}.moment.bad{border-color:#efb0aa}.moment.good{background:#eaf4c9;border-color:#c4dc76}
+    .glossary{display:flex;gap:9px;flex-wrap:wrap;margin-top:26px}.term{padding:10px 13px;border-radius:13px;background:white;border:1px solid var(--line);font-size:12px}.term b{color:var(--green)}
+    @media(max-width:850px){section{padding:72px 28px}.rail{left:10px}.grid-2,.results{grid-template-columns:1fr}.pipeline,.episode{grid-template-columns:1fr 1fr}.pipeline:before,.moment:after{display:none}.experiment-strip,.problem-grid,.roadmap{grid-template-columns:1fr 1fr}.architecture{min-height:auto}.hero-orbit{opacity:.35}.hint{display:none}.analogy{grid-template-columns:1fr}.analogy-mid{transform:rotate(90deg)}}
+    @media(max-width:560px){h1{font-size:52px}.experiment-strip,.problem-grid,.roadmap,.pipeline,.episode{grid-template-columns:1fr}.bar-row{grid-template-columns:100px 1fr 44px}.phase.active{transform:none}.compare{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.note-toggle{right:14px}.speaker-note{right:14px;width:calc(100vw - 28px)}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div class="grain"></div><div class="page-no" id="pageNo">01 / 10</div>
+  <nav class="rail" aria-label="页面导航"></nav><button class="note-toggle" id="noteToggle">讲解提示 N</button><aside class="speaker-note" id="speakerNote"><small>本页怎么讲</small><p></p></aside><div class="hint">↑ ↓ 翻页 · N 显示讲解稿</div>
+
+  <section id="cover">
+    <div class="wrap">
+      <div class="eyebrow">Week 01 · ALFWorld</div>
+      <h1>让 Skill<br>真正会“进化”</h1>
+      <p class="lead">Skill Manager 双层架构的核心机制复现：从一次行动，到一次可验证的策略更新。</p>
+      <div class="hero-meta"><span class="pill">🧠 qwen3.5:4b</span><span class="pill">🏠 ALFWorld</span><span class="pill">🔁 Train → Gate → Test</span></div>
+    </div>
+    <div class="hero-orbit"><i></i></div>
+  </section>
+
+  <section id="analogy"><div class="wrap"><div class="eyebrow">01 · From zero</div><h2>先把它想成：<br>教一个机器人做家务</h2><p class="lead">机器人并不笨，它只是每次都“临场发挥”；Skill 是经验，Manager 是会复盘的教练。</p>
+    <div class="analogy"><article class="analogy-card"><div class="scene">🤖</div><div><h3>Actor = 做事的机器人</h3><p class="plain">看见房间后，从允许的动作里选一个：走过去、拿起、打开、放下……</p></div></article><div class="analogy-mid">＋</div><article class="analogy-card"><div class="scene">🧑‍🏫</div><div><h3>Manager = 复盘的教练</h3><p class="plain">看完整段过程，提炼出下次可复用的做事方法，并先考试再决定是否采用。</p></div></article></div>
+    <div class="glossary"><span class="term"><b>ALFWorld</b>：文字版家务环境</span><span class="term"><b>Skill</b>：给机器人的行动经验</span><span class="term"><b>Gate</b>：更新前的考试</span></div>
+  </div></section>
+
+  <section id="example"><div class="wrap"><div class="eyebrow">02 · One example</div><h2>一次任务，是怎样变成经验的？</h2><p class="lead">例：找到目标物体，把它带到灯旁并检查。失败不是终点，而是外层学习的原材料。</p>
+    <div class="episode"><article class="moment"><div class="moment-icon">📜</div><strong>收到任务</strong><p>目标被保存在上下文里，Actor 每一步都要围绕它行动。</p></article><article class="moment bad"><div class="moment-icon">🔁</div><strong>陷入重复</strong><p>在同一位置反复 examine，没有获得新信息，最终耗尽步数。</p></article><article class="moment"><div class="moment-icon">🧠</div><strong>复盘轨迹</strong><p>Manager 识别错误顺序，提出“先拿物体，再前往灯具”的新规则。</p></article><article class="moment good"><div class="moment-icon">✅</div><strong>验证后采用</strong><p>候选 Skill 在未参与训练的任务上更稳或更快，才进入下一版本。</p></article></div>
+  </div></section>
+
+  <section id="framework"><div class="wrap grid-2">
+    <div><div class="eyebrow">03 · Framework</div><h2>一个执行者<br>一个管理者</h2><p class="lead">内层负责做事，外层负责从轨迹里学习“怎样做得更好”。</p>
+      <div class="steps"><div class="step"><b>01</b><div><strong>Actor 决策</strong><p>在 admissible actions 中选择动作</p></div></div><div class="step"><b>02</b><div><strong>轨迹沉淀</strong><p>记录观察、动作、奖励与停滞</p></div></div><div class="step"><b>03</b><div><strong>Manager 更新</strong><p>提出 Skill 候选，并用验证集把关</p></div></div></div>
+    </div>
+    <div class="architecture">
+      <div class="layer manager"><div class="layer-label">Outer loop</div><h3>Skill Manager</h3><div class="chips"><span class="chip">失败诊断</span><span class="chip">技能编辑</span><span class="chip">验证门控</span><span class="chip">版本回滚</span></div></div>
+      <div class="connector">↕</div>
+      <div class="layer actor"><div class="layer-label">Inner loop</div><h3>Frozen Actor</h3><div class="chips"><span class="chip">观察环境</span><span class="chip">读取 Skill</span><span class="chip">选择动作</span><span class="chip">执行反馈</span></div></div>
+    </div>
+  </div></section>
+
+  <section id="process"><div class="wrap"><div class="eyebrow">04 · Experiment</div><h2>核心闭环，跑通了</h2><p class="lead">本周先做最小复现：单任务贯通训练、技能编辑、验证门控与最终测试。</p>
+    <div class="pipeline"><div class="node"><div class="node-icon">🎮</div><strong>Train</strong><span>采集失败轨迹</span></div><div class="node"><div class="node-icon">🔍</div><strong>Reflect</strong><span>定位重复与错序</span></div><div class="node"><div class="node-icon">✍️</div><strong>Edit</strong><span>生成候选 Skill</span></div><div class="node"><div class="node-icon">⚖️</div><strong>Validate</strong><span>候选 vs. incumbent</span></div><div class="node"><div class="node-icon">🚀</div><strong>Test</strong><span>隔离集验证泛化</span></div></div>
+    <div class="experiment-strip"><div class="exp-card"><strong>20</strong><span>最大交互步数</span></div><div class="exp-card"><strong>8</strong><span>停滞检测窗口</span></div><div class="exp-card"><strong>0</strong><span>全流程无效动作</span></div></div>
+  </div></section>
+
+  <section id="results"><div class="wrap"><div class="eyebrow">05 · Results</div><h2>Skill 有效，更新规则不够聪明</h2>
+    <div class="results"><div class="result-main"><h3>各阶段任务结果</h3>
+      <div class="bar-row"><label>Train</label><div class="bar"><div class="fill fail" style="--w:0%"></div></div><output>0%</output></div>
+      <div class="bar-row"><label>Validation</label><div class="bar"><div class="fill" style="--w:100%"></div></div><output>100%</output></div>
+      <div class="bar-row"><label>No Skill Test</label><div class="bar"><div class="fill fail" style="--w:0%"></div></div><output>0%</output></div>
+      <div class="bar-row"><label>Best Skill Test</label><div class="bar"><div class="fill" style="--w:100%"></div></div><output>100%</output></div>
+      <div class="finding">关键证据：同一测试任务，无 Skill 失败；使用 Skill 后 7 步完成。</div>
+    </div>
+    <div class="result-side"><span class="tag">EFFICIENCY SIGNAL</span><div class="big-number">7 → 3 <small>steps</small></div><p>候选 Skill 在验证任务上把完成步数减少了 57%。</p><div class="compare"><div class="compare-box"><strong>7</strong><span>incumbent</span></div><div class="arrow">→</div><div class="compare-box accent"><strong>3</strong><span>candidate</span></div></div><div class="finding">但旧门控只比较成功率与得分，因此仍拒绝了候选。</div></div></div>
+  </div></section>
+
+  <section id="problems"><div class="wrap"><div class="eyebrow">06 · Findings</div><h2>真正的问题，浮出水面</h2><p class="lead">最小实验的价值，不只是“跑通”，而是暴露了持续更新要解决的四个瓶颈。</p>
+    <div class="problem-grid"><article class="problem"><div><i>⚖️</i><h3>门控盲区</h3></div><p>成功率持平时，旧规则看不见步数与调用成本的改善。</p><span class="tag">Priority 01</span></article><article class="problem"><div><i>🔬</i><h3>样本太少</h3></div><p>单任务结果无法证明更新稳定，也无法估计方差。</p><span class="tag">Priority 02</span></article><article class="problem"><div><i>🧩</i><h3>Skill 难解释</h3></div><p>整段 Markdown 更新，难追踪究竟是哪条规则产生作用。</p><span class="tag">Priority 03</span></article><article class="problem"><div><i>⏱️</i><h3>推理较慢</h3></div><p>20 步训练约 26 分钟，扩量前需控制实验成本。</p><span class="tag">Constraint</span></article></div>
+  </div></section>
+
+  <section id="next"><div class="wrap"><div class="eyebrow">07 · Next Move</div><h2>从一次更新，走向持续进化</h2><p class="lead">第二阶段框架已经实现并通过 dry-run：先小规模验证稳定性，再逐级扩量。</p>
+    <div class="roadmap"><article class="phase active"><div class="phase-no">NOW · 5 / 5 / 5</div><h3>小规模闭环</h3><ul><li>3 轮 Skill 更新</li><li>效率感知门控</li><li>固定验证与测试集</li><li>Skill 版本链</li></ul></article><article class="phase"><div class="phase-no">NEXT · 20 / 10 / 20</div><h3>稳定性验证</h3><ul><li>多任务统计</li><li>多随机种子</li><li>按任务类型拆分</li><li>置信区间</li></ul></article><article class="phase"><div class="phase-no">THEN · 100+</div><h3>规模化评估</h3><ul><li>结构化 Skill</li><li>局部更新与回滚</li><li>消融实验</li><li>持续学习曲线</li></ul></article></div>
+  </div></section>
+
+  <section id="design"><div class="wrap grid-2"><div><div class="eyebrow">08 · Upgrade</div><h2>新的门控：<br>先守住效果，再奖励效率</h2><p class="lead">Reward Guard 保证“不变差”，Efficiency Gate 识别“做得更快、更稳”。</p></div>
+    <div class="architecture"><div class="layer actor"><div class="layer-label">Guard rail</div><h3>效果不退化</h3><div class="chips"><span class="chip">成功率 ≥ incumbent</span><span class="chip">环境得分 ≥ incumbent</span><span class="chip">无效动作不增加</span></div></div><div class="connector">＋</div><div class="layer manager"><div class="layer-label">Acceptance signal</div><h3>效率提升 ≥ 10%</h3><div class="chips"><span class="chip">平均步数</span><span class="chip">模型调用</span><span class="chip">无效动作</span><span class="chip">延迟仅诊断</span></div></div></div>
+  </div></section>
+
+  <section id="finish"><div class="wrap final"><div class="signal">↻</div><div class="eyebrow" style="justify-content:center">Week 01 → Week 02</div><h2>核心机制已复现。<br>下一步，证明它能持续变好。</h2><p class="lead">从“单次成功”升级为“多轮、可验证、可回滚”的 Skill Manager。</p><p class="footer-note">ALFWorld · qwen3.5:4b · Skill Manager Phase 2</p></div></section>
+
+  <script>
+    const sections=[...document.querySelectorAll('section')];
+    const rail=document.querySelector('.rail');
+    const pageNo=document.querySelector('#pageNo');
+    sections.forEach((s,i)=>{const b=document.createElement('button');b.className='dot';b.setAttribute('aria-label',`跳转到第 ${i+1} 页`);b.onclick=()=>s.scrollIntoView({behavior:'smooth'});rail.appendChild(b)});
+    const dots=[...document.querySelectorAll('.dot')];
+    const notes={
+      cover:'开场不要讲技术。先抛出问题：如果一个机器人完成任务后，能不能把经验留下来，并在下一次真的做得更好？本周工作就是验证这条闭环。',
+      analogy:'用家务机器人类比两个角色。Actor 只负责当前怎么做；Manager 不直接做动作，它像教练一样在任务结束后复盘、写经验、组织考试。',
+      example:'带观众走一遍具体故事：机器人重复观察而失败；Manager 从轨迹中找到错误顺序；生成一条新规则；但规则不能直接上线，必须先在没见过的验证任务上考试。',
+      framework:'到这里再引出双层架构。强调模型参数被冻结，改变的是外部 Skill 文档，因此更新更轻量、可审计，也更容易回滚。',
+      process:'五个词讲完整实验：做任务、看失败、改经验、先考试、再测试。Train 用来产生经验，Validation 决定是否更新，Test 只负责最终评价。',
+      results:'先看最直观结论：无 Skill 测试失败，有 Skill 测试成功。再指出更有价值的发现：候选把 7 步降到 3 步，但旧门控没有接纳，说明更新规则本身需要优化。',
+      problems:'这里主动讲局限，避免把单样本结果夸大。核心问题依次是：评价规则、数据规模、可解释性和运行成本。',
+      next:'解释为什么不是直接上 100 个任务：先用 5/5/5 验证统计和版本链，再扩大到 20/10/20，最后才做 100+ 和完整消融。',
+      design:'新版门控分两步：先保证成功率、得分和无效动作不变差；在此前提下，步数或调用数改善 10% 就允许更新。延迟受硬件负载影响，只记录不投票。',
+      finish:'收束为一句话：第一周证明闭环可运行并找到门控盲区；第二周要证明它在更多任务、多轮更新下能够稳定变好。'
+    };
+    const note=document.querySelector('#speakerNote'),noteText=note.querySelector('p'),noteToggle=document.querySelector('#noteToggle');
+    let noteVisible=false,current=0;
+    const renderNote=()=>{noteText.textContent=notes[sections[current].id]||'';note.classList.toggle('show',noteVisible);noteToggle.setAttribute('aria-expanded',String(noteVisible))};
+    noteToggle.onclick=()=>{noteVisible=!noteVisible;renderNote()};
+    const setActive=i=>{current=i;dots.forEach((d,j)=>d.classList.toggle('active',i===j));pageNo.textContent=`${String(i+1).padStart(2,'0')} / ${String(sections.length).padStart(2,'0')}`;renderNote()};
+    const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)setActive(sections.indexOf(e.target))}),{threshold:.58});sections.forEach(s=>observer.observe(s));setActive(0);
+    addEventListener('keydown',e=>{if(e.key.toLowerCase()==='n'){noteVisible=!noteVisible;renderNote();return}if(!['ArrowDown','ArrowUp','PageDown','PageUp',' '].includes(e.key))return;e.preventDefault();const active=dots.findIndex(d=>d.classList.contains('active'));const forward=['ArrowDown','PageDown',' '].includes(e.key);sections[Math.max(0,Math.min(sections.length-1,active+(forward?1:-1)))].scrollIntoView({behavior:'smooth'})});
+  </script>
+</body>
+</html>
