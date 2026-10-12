@@ -1,0 +1,28 @@
+FROM python:3.10-slim-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    ALFWORLD_DATA=/opt/alfworld_data
+
+# ALFWorld's text environment depends on Jericho/TextWorld.  Jericho builds a
+# small native component, so a compiler and make are needed even though the
+# final experiment is CPU-only and does not use the visual THOR extra.
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential cmake git unzip ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --no-cache-dir --upgrade "pip<25" "setuptools<70" wheel \
+    && python -m pip install --no-cache-dir "numpy<2" alfworld==0.4.2 requests pyyaml
+
+WORKDIR /opt/alfworld_project
+COPY requirements.ollama.txt /opt/alfworld_project/requirements.ollama.txt
+COPY download_alfworld_data.py /opt/alfworld_project/download_alfworld_data.py
+COPY alfworld_config.yaml /opt/alfworld_project/alfworld_config.yaml
+COPY ollama_adapter /opt/alfworld_project/ollama_adapter
+
+# Data is deliberately kept outside the image.  It is downloaded once into a
+# named host directory with download_alfworld_data.py and mounted at runtime.
+ENTRYPOINT ["python", "/opt/alfworld_project/ollama_adapter/run_one.py"]

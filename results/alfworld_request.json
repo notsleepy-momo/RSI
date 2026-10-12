@@ -1,0 +1,70 @@
+{
+  "benchmark": "ALFWorld",
+  "mode": "official_textworld_prepare",
+  "split": "train",
+  "task_index": 0,
+  "task_file": "/opt/alfworld_data/json_2.1.1/train/look_at_obj_in_light-AlarmClock-None-DeskLamp-301/trial_T20190907_174127_043461/game.tw-pddl",
+  "observation": "-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 1, a drawer 17, a drawer 16, a drawer 15, a drawer 14, a drawer 13, a drawer 12, a drawer 11, a drawer 10, a drawer 9, a drawer 8, a drawer 7, a drawer 6, a drawer 5, a drawer 4, a drawer 3, a drawer 2, a drawer 1, a dresser 1, a garbagecan 1, a shelf 6, a shelf 5, a shelf 4, a shelf 3, a shelf 2, and a shelf 1.\n\nYour task is to: look at alarmclock under the desklamp.",
+  "admissible_actions": [
+    "go to bed 1",
+    "go to desk 1",
+    "go to drawer 1",
+    "go to drawer 10",
+    "go to drawer 11",
+    "go to drawer 12",
+    "go to drawer 13",
+    "go to drawer 14",
+    "go to drawer 15",
+    "go to drawer 16",
+    "go to drawer 17",
+    "go to drawer 2",
+    "go to drawer 3",
+    "go to drawer 4",
+    "go to drawer 5",
+    "go to drawer 6",
+    "go to drawer 7",
+    "go to drawer 8",
+    "go to drawer 9",
+    "go to dresser 1",
+    "go to garbagecan 1",
+    "go to shelf 1",
+    "go to shelf 2",
+    "go to shelf 3",
+    "go to shelf 4",
+    "go to shelf 5",
+    "go to shelf 6",
+    "help",
+    "inventory",
+    "look"
+  ],
+  "prompt": "You are an ALFWorld text-game agent. Choose exactly one action from the admissible list.\nReturn only JSON with key action. Copy the action verbatim; do not explain.\n\nOBSERVATION:\n-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 1, a drawer 17, a drawer 16, a drawer 15, a drawer 14, a drawer 13, a drawer 12, a drawer 11, a drawer 10, a drawer 9, a drawer 8, a drawer 7, a drawer 6, a drawer 5, a drawer 4, a drawer 3, a drawer 2, a drawer 1, a dresser 1, a garbagecan 1, a shelf 6, a shelf 5, a shelf 4, a shelf 3, a shelf 2, and a shelf 1.\n\nYour task is to: look at alarmclock under the desklamp.\n\nADMISSIBLE ACTIONS:\n[\"go to bed 1\", \"go to desk 1\", \"go to drawer 1\", \"go to drawer 10\", \"go to drawer 11\", \"go to drawer 12\", \"go to drawer 13\", \"go to drawer 14\", \"go to drawer 15\", \"go to drawer 16\", \"go to drawer 17\", \"go to drawer 2\", \"go to drawer 3\", \"go to drawer 4\", \"go to drawer 5\", \"go to drawer 6\", \"go to drawer 7\", \"go to drawer 8\", \"go to drawer 9\", \"go to dresser 1\", \"go to garbagecan 1\", \"go to shelf 1\", \"go to shelf 2\", \"go to shelf 3\", \"go to shelf 4\", \"go to shelf 5\", \"go to shelf 6\", \"help\", \"inventory\", \"look\"]",
+  "ollama_url": "http://host.docker.internal:11434",
+  "ollama_payload": {
+    "model": "qwen3.5:4b",
+    "stream": false,
+    "think": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "You are an ALFWorld text-game agent. Choose exactly one action from the admissible list.\nReturn only JSON with key action. Copy the action verbatim; do not explain.\n\nOBSERVATION:\n-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 1, a drawer 17, a drawer 16, a drawer 15, a drawer 14, a drawer 13, a drawer 12, a drawer 11, a drawer 10, a drawer 9, a drawer 8, a drawer 7, a drawer 6, a drawer 5, a drawer 4, a drawer 3, a drawer 2, a drawer 1, a dresser 1, a garbagecan 1, a shelf 6, a shelf 5, a shelf 4, a shelf 3, a shelf 2, and a shelf 1.\n\nYour task is to: look at alarmclock under the desklamp.\n\nADMISSIBLE ACTIONS:\n[\"go to bed 1\", \"go to desk 1\", \"go to drawer 1\", \"go to drawer 10\", \"go to drawer 11\", \"go to drawer 12\", \"go to drawer 13\", \"go to drawer 14\", \"go to drawer 15\", \"go to drawer 16\", \"go to drawer 17\", \"go to drawer 2\", \"go to drawer 3\", \"go to drawer 4\", \"go to drawer 5\", \"go to drawer 6\", \"go to drawer 7\", \"go to drawer 8\", \"go to drawer 9\", \"go to dresser 1\", \"go to garbagecan 1\", \"go to shelf 1\", \"go to shelf 2\", \"go to shelf 3\", \"go to shelf 4\", \"go to shelf 5\", \"go to shelf 6\", \"help\", \"inventory\", \"look\"]"
+      }
+    ],
+    "format": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action"
+      ]
+    },
+    "options": {
+      "temperature": 0,
+      "seed": 0,
+      "num_ctx": 2048,
+      "num_predict": 32
+    }
+  }
+}

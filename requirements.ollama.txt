@@ -1,0 +1,4 @@
+numpy<2
+alfworld==0.4.2
+requests
+pyyaml
