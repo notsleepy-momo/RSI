@@ -395,14 +395,36 @@ def compact_trajectories(episodes: list[EpisodeResult]) -> str:
     return "\n\n".join(chunks)
 
 
+PROTECTED_SKILL_TERMS = ("look-under-light", "lamp", "clean", "heat", "cool")
+
+
+def validate_skill_edit(incumbent: str, candidate: str) -> tuple[bool, str]:
+    """Reject malformed edits and edits that erase known task procedures."""
+    candidate = candidate.strip()
+    if not candidate:
+        return False, "empty candidate"
+    if len(candidate) > 1800:
+        return False, "candidate exceeds 1800 characters"
+    incumbent_lower = incumbent.lower()
+    candidate_lower = candidate.lower()
+    missing = [term for term in PROTECTED_SKILL_TERMS if term in incumbent_lower and term not in candidate_lower]
+    if missing:
+        return False, f"candidate removed protected task concepts: {', '.join(missing)}"
+    return True, "passed structural precheck"
+
+
 def propose_skill_edit(backend: LocalQwen, model: str, seed: int, skill: str, episodes: list[EpisodeResult]) -> dict[str, str]:
     prompt = f"""You optimize a reusable ALFWorld skill document for a frozen small language model.
 Diagnose recurring trajectory failures and produce ONE bounded revision.
 
 Rules:
-- Preserve useful instructions.
+- Make exactly one localized rule change; leave unrelated rules unchanged.
+- Preserve the concrete procedures for look-under-light, lamp, clean, heat, and cool tasks.
+- Never replace a concrete task procedure with generic advice.
 - Add only reusable, actionable rules supported by trajectory evidence.
-- Remove or replace rules that caused repetition or wrong ordering.
+- Cite exact failed action transitions in the diagnosis.
+- Prefer one precise loop-breaking or sub-goal rule over rewriting the document.
+- If evidence is insufficient, return the incumbent skill unchanged.
 - Do not encode task IDs, room layouts, exact answers, or validation examples.
 - Keep the entire candidate under 1800 characters.
 - Return JSON with diagnosis, candidate_skill, and edit_summary.
@@ -415,12 +437,19 @@ TRAINING TRAJECTORIES:
     body, _ = local_chat(backend, edit_payload(model, prompt, seed))
     parsed = parse_json_content(body)
     candidate = str(parsed.get("candidate_skill", "")).strip()
-    if not candidate or len(candidate) > 1800:
-        return {"diagnosis": str(parsed.get("diagnosis", "invalid candidate")), "candidate_skill": skill, "edit_summary": "rejected_before_validation: invalid candidate"}
+    valid, precheck = validate_skill_edit(skill, candidate)
+    if not valid:
+        return {
+            "diagnosis": str(parsed.get("diagnosis", "invalid candidate")),
+            "candidate_skill": skill,
+            "edit_summary": f"rejected_before_validation: {precheck}",
+            "precheck": precheck,
+        }
     return {
         "diagnosis": str(parsed.get("diagnosis", "")),
         "candidate_skill": candidate,
         "edit_summary": str(parsed.get("edit_summary", "")),
+        "precheck": precheck,
     }
 
 

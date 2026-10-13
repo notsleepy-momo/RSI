@@ -10,6 +10,11 @@ changing that baseline. It evaluates a two-level design:
   bounded skill edit, validates it against the incumbent, and versions only
   accepted edits.
 
+The v2 search uses cumulative training trajectories, proposes three localized
+candidates per round, protects the concrete task-family procedures, and caches
+deterministic incumbent validation runs. Candidate selection remains
+reward-first and the original acceptance gate is unchanged.
+
 ## Fixed small split
 
 `configs/splits_small_5.json` fixes five train, five `valid_seen`, and five
@@ -69,6 +74,7 @@ the official ALFWorld text data:
 chmod +x run_skill_manager_small.sh
 ./run_skill_manager_small.sh \
   --rounds 3 \
+  --candidates-per-round 3 \
   --patience 2 \
   --max-steps 20 \
   --action-retries 2 \
@@ -80,3 +86,21 @@ The launcher uses `python`, local data under `./data`, local results under
 `./results`, and FP16 inference. Override these with the `PYTHON_BIN`,
 `ALFWORLD_DATA`, `MODEL`, `DEVICE_MAP`, and `MODEL_DTYPE` environment variables.
 For a previously downloaded model, set `MODEL` to its local directory.
+
+Run the fixed 10/10/10 v2 comparison without overwriting the baseline:
+
+```bash
+python ollama_adapter/skill_manager_experiment.py \
+  --model /root/autodl-tmp/models/Qwen3.5-4B \
+  --device-map auto \
+  --dtype float16 \
+  --split-manifest configs/splits_medium_10.json \
+  --output-dir results/skill_manager_medium_10_v2 \
+  --rounds 2 \
+  --candidates-per-round 3 \
+  --patience 0 \
+  --max-steps 20 \
+  --action-retries 2 \
+  --stagnation-window 8 \
+  --min-efficiency-gain 0.10
+```

@@ -1,7 +1,7 @@
 """Multi-round, two-level Skill Manager experiment for ALFWorld.
 
 The frozen Actor comes from skillopt_minimal.  This module owns the outer
-loop: collect training evidence, propose one bounded skill edit, compare it
+loop: accumulate training evidence, propose bounded skill edits, compare them
 against the incumbent on a fixed validation set, version accepted skills, and
 evaluate no-skill/static/managed policies on an untouched test set.
 """
@@ -34,6 +34,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--output-dir", default=str(project / "results" / "skill_manager_small"))
     p.add_argument("--split-manifest", default=str(project / "configs" / "splits_small_5.json"))
     p.add_argument("--rounds", type=int, default=3)
+    p.add_argument("--candidates-per-round", type=int, default=3)
     p.add_argument("--patience", type=int, default=2, help="stop after this many consecutive rejected rounds; 0 disables")
     p.add_argument("--max-steps", type=int, default=20)
     p.add_argument("--action-retries", type=int, default=2)
@@ -141,6 +142,17 @@ def write_version(directory: Path, version: int, skill: str, metadata: dict[str,
     save_json(versions / f"{stem}.json", metadata)
 
 
+def candidate_rank(metrics: dict[str, float]) -> tuple[float, float, float, float, float]:
+    """Reward-first deterministic ordering for candidates that pass the gate."""
+    return (
+        metrics["success_rate"],
+        metrics["mean_score"],
+        -metrics["invalid_actions"],
+        -metrics["mean_steps"],
+        -metrics["model_calls"],
+    )
+
+
 def dry_run(out: Path, manifest: dict[str, Any], args: argparse.Namespace, skill: str) -> int:
     tied_but_faster = efficiency_aware_gate(
         {"success_rate": 1.0, "mean_score": 1.0, "invalid_actions": 0.0, "mean_steps": 3.0,
@@ -164,6 +176,8 @@ def dry_run(out: Path, manifest: dict[str, Any], args: argparse.Namespace, skill
         "ok": True,
         "manifest": manifest,
         "round_batches": batches,
+        "candidates_per_round": args.candidates_per_round,
+        "training_evidence": "cumulative across rounds",
         "planned_comparisons": ["test_no_skill", "test_static", "test_managed"],
         "gate_examples": {"tied_but_faster": tied_but_faster, "reward_regression": reward_regression},
     }
@@ -176,6 +190,8 @@ def main() -> int:
     args = parse_args()
     if not 0 <= args.min_efficiency_gain <= 1:
         raise SystemExit("--min-efficiency-gain must be between 0 and 1")
+    if args.candidates_per_round < 1:
+        raise SystemExit("--candidates-per-round must be at least 1")
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     manifest = load_manifest(Path(args.split_manifest))
@@ -190,36 +206,85 @@ def main() -> int:
     version = 0
     rejected_streak = 0
     history: list[dict[str, Any]] = []
+    cumulative_train_eps: list[EpisodeResult] = []
+    validation_cache: dict[str, list[EpisodeResult]] = {}
     write_version(out, version, skill, {"version": version, "sha": stable_sha(skill), "source": "initial"})
 
     for round_number, train_batch in enumerate(round_batches(manifest["train"], args.rounds), start=1):
         prefix = f"round_{round_number:02d}"
         train_eps = run_set(runner, "train", train_batch, skill, args.max_steps, out, f"{prefix}_train")
-        edit = propose_skill_edit(runner.backend, args.model, args.seed + round_number, skill, train_eps)
-        candidate = edit["candidate_skill"]
-        incumbent_eps = run_set(
-            runner, "valid_seen", manifest["validation"], skill, args.max_steps, out, f"{prefix}_validation_incumbent"
-        )
-        candidate_eps = run_set(
-            runner, "valid_seen", manifest["validation"], candidate, args.max_steps, out, f"{prefix}_validation_candidate"
-        )
+        cumulative_train_eps.extend(train_eps)
+        incumbent_sha = stable_sha(skill)
+        cache_hit = incumbent_sha in validation_cache
+        if cache_hit:
+            incumbent_eps = validation_cache[incumbent_sha]
+            print(f"[{prefix}] reusing cached incumbent validation for skill {incumbent_sha}", flush=True)
+        else:
+            incumbent_eps = run_set(
+                runner, "valid_seen", manifest["validation"], skill, args.max_steps, out,
+                f"{prefix}_validation_incumbent",
+            )
+            validation_cache[incumbent_sha] = incumbent_eps
         incumbent_score = score(incumbent_eps)
-        candidate_score = score(candidate_eps)
-        gate = efficiency_aware_gate(candidate_score, incumbent_score, args.min_efficiency_gain)
-        changed = stable_sha(candidate) != stable_sha(skill)
-        gate["accepted"] = bool(gate["accepted"] and changed)
-        if not changed:
-            gate["reason"] = "rejected: candidate is identical to incumbent"
+        candidates: list[dict[str, Any]] = []
+        seen_candidate_shas: set[str] = set()
+        for candidate_index in range(1, args.candidates_per_round + 1):
+            edit_seed = args.seed + round_number * 100 + candidate_index
+            edit = propose_skill_edit(
+                runner.backend, args.model, edit_seed, skill, cumulative_train_eps
+            )
+            candidate = edit["candidate_skill"]
+            candidate_sha = stable_sha(candidate)
+            changed = candidate_sha != incumbent_sha
+            duplicate = candidate_sha in seen_candidate_shas
+            seen_candidate_shas.add(candidate_sha)
+            if not changed or duplicate:
+                candidate_score = incumbent_score
+                gate = efficiency_aware_gate(candidate_score, incumbent_score, args.min_efficiency_gain)
+                gate["accepted"] = False
+                gate["reason"] = (
+                    "rejected: duplicate candidate" if duplicate
+                    else "rejected: candidate is identical to incumbent"
+                )
+            else:
+                candidate_eps = run_set(
+                    runner, "valid_seen", manifest["validation"], candidate, args.max_steps, out,
+                    f"{prefix}_validation_candidate_{candidate_index:02d}",
+                )
+                validation_cache[candidate_sha] = candidate_eps
+                candidate_score = score(candidate_eps)
+                gate = efficiency_aware_gate(candidate_score, incumbent_score, args.min_efficiency_gain)
+            candidates.append({
+                "candidate_index": candidate_index,
+                "edit_seed": edit_seed,
+                "candidate_skill_sha": candidate_sha,
+                "candidate": candidate_score,
+                "gate": gate,
+                "edit": edit,
+            })
+
+        accepted = [item for item in candidates if item["gate"]["accepted"]]
+        selection_pool = accepted if accepted else candidates
+        selected = max(selection_pool, key=lambda item: candidate_rank(item["candidate"]))
+        edit = selected["edit"]
+        candidate = edit["candidate_skill"]
+        candidate_score = selected["candidate"]
+        gate = selected["gate"]
         record = {
             "round": round_number,
             "train_indices": train_batch,
+            "cumulative_train_indices": [ep.task_index for ep in cumulative_train_eps],
+            "cumulative_train_episode_count": len(cumulative_train_eps),
             "incumbent_version": version,
-            "incumbent_skill_sha": stable_sha(skill),
-            "candidate_skill_sha": stable_sha(candidate),
+            "incumbent_skill_sha": incumbent_sha,
+            "incumbent_validation_cache_hit": cache_hit,
+            "selected_candidate_index": selected["candidate_index"],
+            "candidate_skill_sha": selected["candidate_skill_sha"],
             "incumbent": incumbent_score,
             "candidate": candidate_score,
             "gate": gate,
             "edit": edit,
+            "candidates": candidates,
         }
         if gate["accepted"]:
             version += 1
@@ -255,6 +320,8 @@ def main() -> int:
         "manifest": manifest,
         "rounds_requested": args.rounds,
         "rounds_completed": len(history),
+        "candidates_per_round": args.candidates_per_round,
+        "training_evidence": "cumulative across rounds",
         "accepted_updates": sum(bool(item["gate"]["accepted"]) for item in history),
         "final_skill_version": version,
         "final_skill_sha": stable_sha(skill),

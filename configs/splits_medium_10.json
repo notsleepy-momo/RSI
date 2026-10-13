@@ -1,0 +1,8 @@
+{
+  "name": "alfworld_medium_10_seed0",
+  "seed": 0,
+  "train": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "validation": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "test": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "notes": "Fixed 10/10/10 split. The three index lists address separate ALFWorld partitions."
+}
