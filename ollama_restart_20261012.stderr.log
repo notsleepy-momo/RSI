@@ -3618,3 +3618,11 @@ slot print_timing: id  0 | task 385 |    graphs reused =        224
 slot      release: id  0 | task 385 | stop processing: n_tokens = 670, truncated = 0
 srv  update_slots: all slots are idle
 time=2026-10-12T15:45:53.602+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=3h55m20.17206314s consecutive_failures=0
+time=2026-10-12T19:41:17.755+08:00 level=WARN source=model_recommendations.go:168 msg="model recommendations refresh failed" error="Get \"https://ollama.com/api/experimental/model-recommendations\": context deadline exceeded"
+time=2026-10-12T19:41:17.920+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4m2.620817169s consecutive_failures=1
+time=2026-10-12T19:45:24.435+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4h27m43.165954464s consecutive_failures=0
+time=2026-10-13T00:13:13.445+08:00 level=WARN source=model_recommendations.go:168 msg="model recommendations refresh failed" error="Get \"https://ollama.com/api/experimental/model-recommendations\": context deadline exceeded"
+time=2026-10-13T00:13:13.452+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4m44.883954602s consecutive_failures=1
+time=2026-10-13T00:18:00.648+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=3h19m50.447790218s consecutive_failures=0
+time=2026-10-13T03:37:52.351+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4h39m34.41871523s consecutive_failures=0
+time=2026-10-13T08:17:28.443+08:00 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4h0m34.245597759s consecutive_failures=0

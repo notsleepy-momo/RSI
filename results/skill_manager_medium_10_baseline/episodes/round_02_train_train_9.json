@@ -1,0 +1,917 @@
+{
+  "split": "train",
+  "task_index": 9,
+  "task_file": "/root/autodl-tmp/RSI/data/json_2.1.1/train/look_at_obj_in_light-AlarmClock-None-DeskLamp-304/trial_T20190907_170557_255365/game.tw-pddl",
+  "goal": "look at alarmclock under the desklamp.",
+  "skill_sha": "cc777412b2f4",
+  "won": false,
+  "final_score": 0.0,
+  "steps": [
+    {
+      "step": 0,
+      "observation": "-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see a bed 2, a bed 1, a desk 1, a drawer 3, a drawer 2, a drawer 1, a garbagecan 1, a laundryhamper 1, and a shelf 1.\n\nYour task is to: look at alarmclock under the desklamp.",
+      "admissible_actions": [
+        "go to bed 1",
+        "go to bed 2",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look"
+      ],
+      "model_output": {
+        "action_id": 2
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 2,
+          "resolved_action_id": 2,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.751
+    },
+    {
+      "step": 1,
+      "observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 12
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 12,
+          "resolved_action_id": 12,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "take alarmclock 1 from desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You pick up the alarmclock 1 from the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.628
+    },
+    {
+      "step": 2,
+      "observation": "You pick up the alarmclock 1 from the desk 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine alarmclock 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "There's nothing special about alarmclock 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.76
+    },
+    {
+      "step": 3,
+      "observation": "There's nothing special about alarmclock 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 13
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 13,
+          "resolved_action_id": 13,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "move alarmclock 1 to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You move the alarmclock 1 to the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.599
+    },
+    {
+      "step": 4,
+      "observation": "You move the alarmclock 1 to the desk 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.792
+    },
+    {
+      "step": 5,
+      "observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 4
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 4,
+          "resolved_action_id": 4,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to bed 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.807
+    },
+    {
+      "step": 6,
+      "observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "admissible_actions": [
+        "examine bed 1",
+        "go to bed 2",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look"
+      ],
+      "model_output": {
+        "action_id": 2
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 2,
+          "resolved_action_id": 2,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.548
+    },
+    {
+      "step": 7,
+      "observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 12
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 12,
+          "resolved_action_id": 12,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "take alarmclock 1 from desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You pick up the alarmclock 1 from the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.67
+    },
+    {
+      "step": 8,
+      "observation": "You pick up the alarmclock 1 from the desk 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine alarmclock 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "There's nothing special about alarmclock 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.57
+    },
+    {
+      "step": 9,
+      "observation": "There's nothing special about alarmclock 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 13
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 13,
+          "resolved_action_id": 13,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "move alarmclock 1 to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You move the alarmclock 1 to the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.61
+    },
+    {
+      "step": 10,
+      "observation": "You move the alarmclock 1 to the desk 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.607
+    },
+    {
+      "step": 11,
+      "observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 4
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 4,
+          "resolved_action_id": 4,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to bed 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.811
+    },
+    {
+      "step": 12,
+      "observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "admissible_actions": [
+        "examine bed 1",
+        "go to bed 2",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look"
+      ],
+      "model_output": {
+        "action_id": 2
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 2,
+          "resolved_action_id": 2,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.553
+    },
+    {
+      "step": 13,
+      "observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 12
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 12,
+          "resolved_action_id": 12,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "take alarmclock 1 from desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You pick up the alarmclock 1 from the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.864
+    },
+    {
+      "step": 14,
+      "observation": "You pick up the alarmclock 1 from the desk 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine alarmclock 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "There's nothing special about alarmclock 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.566
+    },
+    {
+      "step": 15,
+      "observation": "There's nothing special about alarmclock 1.",
+      "admissible_actions": [
+        "examine alarmclock 1",
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "move alarmclock 1 to desk 1"
+      ],
+      "model_output": {
+        "action_id": 13
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 13,
+          "resolved_action_id": 13,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "move alarmclock 1 to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You move the alarmclock 1 to the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.607
+    },
+    {
+      "step": 16,
+      "observation": "You move the alarmclock 1 to the desk 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 0
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 0,
+          "resolved_action_id": 0,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "examine desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.8
+    },
+    {
+      "step": 17,
+      "observation": "On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 4
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 4,
+          "resolved_action_id": 4,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to bed 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.824
+    },
+    {
+      "step": 18,
+      "observation": "You arrive at bed 1. On the bed 1, you see nothing.",
+      "admissible_actions": [
+        "examine bed 1",
+        "go to bed 2",
+        "go to desk 1",
+        "go to drawer 1",
+        "go to drawer 2",
+        "go to drawer 3",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look"
+      ],
+      "model_output": {
+        "action_id": 2
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 2,
+          "resolved_action_id": 2,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "go to desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.562
+    },
+    {
+      "step": 19,
+      "observation": "You arrive at desk 1. On the desk 1, you see a alarmclock 1, a bowl 2, a bowl 1, a creditcard 1, a mug 3, a mug 2, a statue 2, and a statue 1.",
+      "admissible_actions": [
+        "examine desk 1",
+        "examine drawer 1",
+        "examine drawer 2",
+        "examine drawer 3",
+        "go to bed 1",
+        "go to bed 2",
+        "go to garbagecan 1",
+        "go to laundryhamper 1",
+        "go to shelf 1",
+        "help",
+        "inventory",
+        "look",
+        "take alarmclock 1 from desk 1",
+        "take book 1 from drawer 1",
+        "take book 2 from drawer 1",
+        "take bowl 1 from desk 1",
+        "take bowl 2 from desk 1",
+        "take cd 1 from drawer 3",
+        "take creditcard 1 from desk 1",
+        "take keychain 1 from drawer 2",
+        "take mug 2 from desk 1",
+        "take mug 3 from desk 1",
+        "take pen 1 from drawer 2",
+        "take pen 2 from drawer 3",
+        "take pencil 1 from drawer 3",
+        "take statue 1 from desk 1",
+        "take statue 2 from desk 1"
+      ],
+      "model_output": {
+        "action_id": 12
+      },
+      "action_attempts": [
+        {
+          "attempt": 0,
+          "raw_action_id": 12,
+          "resolved_action_id": 12,
+          "valid": true,
+          "selection": "model_action_id"
+        }
+      ],
+      "selected_action": "take alarmclock 1 from desk 1",
+      "selection": "model_action_id",
+      "loop_guard_blocked": [],
+      "next_observation": "You pick up the alarmclock 1 from the desk 1.",
+      "score": 0.0,
+      "done": false,
+      "latency_seconds": 0.68
+    }
+  ],
+  "invalid_action_count": 0,
+  "model_call_count": 20,
+  "latency_seconds": 13.609,
+  "done_reason": "max_steps"
+}
